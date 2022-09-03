@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHART JS</title>
+
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .btn {
+            border: none;
+            padding: 8px;
+            border-radius: 4px;
+            border: solid 2px #efefef;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #ddd;
+        }
+        .btn-active {
+            border: solid 2px #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div>
+            <button class="btn btn-active" id="btn-monthly">Monthly</button>
+            <button class="btn" id="btn-weekly">Weekly</button>
+        </div>
+        <canvas id="bar-graph"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const barLabels = [
+                "Student 1", 
+                "Student 2", 
+                "Student 3", 
+                "Student 4", 
+                "Student 5", 
+                "Student 6", 
+                "Student 7", 
+        ]
+
+        const sampleWeeklyData = {
+            presentData: [3, 4, 5, 5, 4, 3, 4],
+            absentData: [1, 2, 2, 2, 1, 3, 2],
+        }
+        
+        const sampleMonthlyData = {
+            presentData: [20,21, 22, 20, 19, 18, 17],
+            absentData: [5, 4, 3, 1, 6, 7, 8]
+        }
+    </script>
+
+    <script>
+
+        const getData = (type) => { // type: 'weekly' | 'monthly'
+            return {
+                labels: barLabels,
+                datasets: [
+                    {
+                        label: 'Present',
+                        backgroundColor: 'rgb(99, 255, 132)',
+                        borderColor: 'rgb(99, 255, 132)',
+                        data: type === "weekly" ? sampleWeeklyData.presentData : sampleMonthlyData.presentData
+                    },
+                    {
+                        label: 'Absent',
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        data: type === "weekly" ? sampleWeeklyData.absentData : sampleMonthlyData.absentData
+                    }
+                ]
+            }
+        }
+      
+        const getConfig = (type = "monthly") => { // type: 'weekly' | "monthly"
+            const config = {
+                type: 'bar',
+                data: getData(type),
+                options: {
+                    barThickness: 40,
+                    responsive: true,
+                    scales: {
+                        yAxis: {
+                            max: type === "monthly" ? 30 : 7,
+                            min: 0
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Chart.js Bar Chart'
+                        }
+                    },  
+                }
+            };
+            return config;
+        } 
+    </script>
+
+    <script>
+        // renders chart
+        new Chart(document.getElementById('bar-graph'), getConfig("monthly"));
+
+        // TOGGLE BUTTON CLICK
+        const monthlyButton = document.getElementById("btn-monthly");
+        const weeklyButton = document.getElementById("btn-weekly");
+
+        // monthly toggle button click
+        monthlyButton.addEventListener("click", () => {
+            // style: toggles btn-active className
+            monthlyButton.classList.add("btn-active");
+            weeklyButton.classList.remove("btn-active")
+
+            // removes current chart element and creates new
+            document.getElementById('bar-graph').remove();
+            const container = document.querySelector('.container');
+            const newCanvas = document.createElement('canvas');
+            newCanvas.id =  "bar-graph";
+            container.appendChild(newCanvas);
+
+            // new chart element
+            new Chart(document.getElementById('bar-graph'), getConfig("monthly"));
+        });
+
+        // weekly toggle button click
+        weeklyButton.addEventListener("click", () => {
+            // style: toggles btn-active className
+            weeklyButton.classList.add("btn-active");
+            monthlyButton.classList.remove("btn-active")
+
+            // removes current chart element and creates new
+            document.getElementById('bar-graph').remove();
+            const container = document.querySelector('.container');
+            const newCanvas = document.createElement('canvas');
+            newCanvas.id =  "bar-graph";
+            container.appendChild(newCanvas);
+            
+            // new chart element
+            new Chart(document.getElementById('bar-graph'), getConfig("weekly"));
+        });
+    </script>
+</body>
+</html>
